@@ -11,27 +11,35 @@
     Admin : Change Name
 </div>
 
-<div class="container">
-    <a class="back-link"
-       href="${pageContext.request.contextPath}/admin/dashboard">
-        - Back to Dashboard
-    </a>
+<div class="container center">
 
-    <div class="card" style="max-width: 500px;">
-        <h3>Change Admin Name</h3>
+    <div class="card" style="max-width: 500px; width: 100%;">
+
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/admin/dashboard">
+            &larr; Back to Dashboard
+        </a>
+
+        <div class="section-title">Change Admin Name</div>
 
         <form method="post"
               action="${pageContext.request.contextPath}/admin/change-name"
               onsubmit="return confirm('Are you sure you want to change the admin name?');">
 
-            <label>New Admin Name</label><br>
-            <input type="text" name="newName" required /><br><br>
+            <label for="newName">New Admin Name</label>
+            <input type="text" id="newName" name="newName" required />
 
             <button type="submit">Update Name</button>
         </form>
 
-        <p style="color:red">${error}</p>
-        <p style="color:green">${success}</p>
+        <c:if test="${not empty error}">
+            <div class="error">${error}</div>
+        </c:if>
+
+        <c:if test="${not empty success}">
+            <div class="success">${success}</div>
+        </c:if>
+
     </div>
 
 </div>

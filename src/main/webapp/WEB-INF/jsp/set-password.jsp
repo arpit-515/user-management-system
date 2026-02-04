@@ -11,26 +11,32 @@
     Set Account Password
 </div>
 
-<div class="container">
-    <div class="card" style="max-width:400px;">
-        <h3>Create Password</h3>
+<div class="container center">
+
+    <div class="card" style="max-width: 400px; width: 100%;">
+
+        <div class="section-title">Create Password</div>
 
         <form method="post"
               action="${pageContext.request.contextPath}/users/set-password">
 
-            <input type="hidden" name="email" value="${email}"/>
+            <input type="hidden" name="email" value="${email}" />
 
-            <label>New Password</label>
-            <input type="password" name="password" required>
+            <label for="password">New Password</label>
+            <input type="password" id="password"
+                   name="password" required>
 
-            <label>Confirm Password</label>
-            <input type="password" name="confirmPassword" required>
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword"
+                   name="confirmPassword" required>
 
             <button type="submit">Save Password</button>
         </form>
 
         <p class="error">${error}</p>
+
     </div>
+
 </div>
 
 </body>

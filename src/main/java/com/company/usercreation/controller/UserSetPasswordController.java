@@ -1,5 +1,6 @@
 package com.company.usercreation.controller;
 
+import com.company.usercreation.Services.EmailService;
 import com.company.usercreation.model.User;
 import com.company.usercreation.repository.UserRepository;
 import com.company.usercreation.util.PasswordValidator;
@@ -16,14 +17,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserSetPasswordController {
 
     private final UserRepository userRepository;
+    private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserSetPasswordController(
             UserRepository userRepository,
-            BCryptPasswordEncoder passwordEncoder
-    ) {
+            BCryptPasswordEncoder passwordEncoder,
+            EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @GetMapping("/set-password")
@@ -61,6 +64,7 @@ public class UserSetPasswordController {
         user.setPasswordHash(passwordEncoder.encode(password));
         user.setStatus(User.Status.ACTIVE);
         userRepository.save(user);
+        emailService.sendConfirmation(user.getEmail(), "SETTING PASSWORD");
 
         return "redirect:/users/login?passwordSet=true";
     }

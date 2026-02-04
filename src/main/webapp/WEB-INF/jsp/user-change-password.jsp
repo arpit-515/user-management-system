@@ -12,25 +12,29 @@
     Change Password
 </div>
 
-<div class="container">
-    <a class="back-link"
-       href="${pageContext.request.contextPath}/users/dashboard">
-        - Back to Dashboard
-    </a>
+<div class="container center">
 
-    <div class="card" style="max-width: 400px;">
-        <h3>Verify Current Password</h3>
+    <div class="card" style="max-width: 400px; width: 100%;">
+
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/users/dashboard">
+            &larr; Back to Dashboard
+        </a>
+
+        <div class="section-title">Verify Current Password</div>
 
         <form method="post"
               action="${pageContext.request.contextPath}/users/change-password">
 
-            <label>Current Password</label>
-            <input type="password" name="oldPassword" required>
+            <label for="oldPassword">Current Password</label>
+            <input type="password" id="oldPassword"
+                   name="oldPassword" required>
 
             <button type="submit">Continue</button>
         </form>
 
         <p class="error">${error}</p>
+
     </div>
 
 </div>

@@ -12,37 +12,47 @@
     User Login
 </div>
 
-<div class="container">
+<div class="container center">
 
-    <div class="card" style="max-width: 400px;">
-        <h3>User Login</h3>
+    <div class="card" style="max-width: 400px; width: 100%;">
+
+        <div class="section-title" style="text-align:center;">
+            User Login
+        </div>
 
         <form method="post"
               action="${pageContext.request.contextPath}/users/login">
 
-            <label>Email</label><br>
-            <input type="email" name="email" required /><br><br>
+            <label for="email">Email</label>
+            <input type="email" id="email"
+                   name="email" required />
 
-            <label>Password</label><br>
-            <input type="password" name="password" required /><br><br>
+            <label for="password">Password</label>
+            <input type="password" id="password"
+                   name="password" required />
 
-            <label>Captcha - ${captchaQuestion}</label>
-            <input type="text" name="captcha" required>
+            <label for="captcha">
+                Captcha – ${captchaQuestion}
+            </label>
+            <input type="text" id="captcha"
+                   name="captcha" required />
 
             <button type="submit">Login</button>
         </form>
 
-        <p style="color:red">${error}</p>
-        <p style="color:red">${success}</p>
+        <p class="error">${error}</p>
+        <p class="error">${success}</p>
+
         <%
             if ("true".equals(request.getParameter("passwordChanged"))) {
         %>
-        <p style="color:green;">
+        <p class="success">
             Password changed successfully. Please login again.
         </p>
         <%
             }
         %>
+
         <%
             if ("true".equals(request.getParameter("passwordSet"))) {
         %>
@@ -52,6 +62,7 @@
         <%
             }
         %>
+
         <%
             if ("true".equals(request.getParameter("verified"))) {
         %>
@@ -62,11 +73,14 @@
             }
         %>
 
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/users/forgot-password">
+            Forgot Password?
+        </a>
+
     </div>
 
 </div>
-<a href="${pageContext.request.contextPath}/users/forgot-password">
-    Forgot Password?
-</a>
+
 </body>
 </html>

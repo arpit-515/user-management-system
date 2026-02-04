@@ -12,15 +12,23 @@
     Account Verification
 </div>
 
-<div class="container">
+<div class="container center">
 
-    <div class="card" style="max-width: 500px;">
-        <h3>Account Not Verified</h3>
-        <p>Your account could not be verified or the link has expired.</p>
+    <div class="card" style="max-width: 500px; width: 100%; text-align: center;">
 
-        <a href="${pageContext.request.contextPath}/users/verify/email?email=${email}">
-            Try Verification Again
+        <div class="section-title">
+            Account Not Verified
+        </div>
+
+        <p>
+            Your account could not be verified or the verification link has expired.
+        </p>
+
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/users/login">
+            &larr; Go to Login Page
         </a>
+
     </div>
 
 </div>

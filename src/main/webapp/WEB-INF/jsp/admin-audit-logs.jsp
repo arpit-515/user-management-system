@@ -15,17 +15,15 @@
 
 <div class="container">
 
-    <div style="width: 100%;">
+    <a class="back-link"
+       href="${pageContext.request.contextPath}/admin/dashboard">
+        &larr; Back to Dashboard
+    </a>
 
-        <a class="back-link"
-           href="${pageContext.request.contextPath}/admin/dashboard"
-           style="display: inline-block; margin-bottom: 10px; font-weight: bold;">
-            &larr; Back to Dashboard
-        </a>
+    <div class="card">
+        <div class="section-title">System Logs</div>
 
-        <div class="card" style="width: 100%;">
-            <h3>System Logs</h3>
-
+        <div class="table-wrapper">
             <table class="table">
                 <thead>
                 <tr>
@@ -59,7 +57,9 @@
                 } else {
                 %>
                 <tr>
-                    <td colspan="4" style="text-align:center;">No logs found.</td>
+                    <td colspan="4" style="text-align:center;">
+                        No logs found.
+                    </td>
                 </tr>
                 <%
                     }
@@ -68,6 +68,7 @@
             </table>
         </div>
     </div>
+
 </div>
 
 </body>

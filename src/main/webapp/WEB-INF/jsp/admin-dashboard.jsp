@@ -15,11 +15,12 @@
 <div class="container">
 
     <div class="card">
-        <h3>Welcome, Administrator</h3>
-        <p>You are successfully logged in. Use the options below to manage users and system settings.</p>
+        <div class="section-title">Welcome, Administrator</div>
+        <p>
+            You are successfully logged in.
+            Use the options below to manage users and system settings.
+        </p>
     </div>
-
-    <br/>
 
     <div class="section-title">Administration</div>
 
@@ -47,8 +48,6 @@
         </div>
 
     </div>
-
-    <br/>
 
     <div class="section-title">Account Settings</div>
 

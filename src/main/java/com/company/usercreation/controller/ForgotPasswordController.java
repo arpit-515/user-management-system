@@ -1,10 +1,11 @@
 package com.company.usercreation.controller;
 
+import com.company.usercreation.Services.EmailService;
 import com.company.usercreation.model.OtpToken;
 import com.company.usercreation.model.User;
 import com.company.usercreation.repository.OtpTokenRepository;
 import com.company.usercreation.repository.UserRepository;
-import com.company.usercreation.util.OtpGenerator;
+import com.company.usercreation.util.TokenUtil;
 import com.company.usercreation.util.PasswordValidator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,15 +21,17 @@ public class ForgotPasswordController {
     private final UserRepository userRepository;
     private final OtpTokenRepository otpTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public ForgotPasswordController(
             UserRepository userRepository,
             OtpTokenRepository otpTokenRepository,
-            BCryptPasswordEncoder passwordEncoder
-    ) {
+            BCryptPasswordEncoder passwordEncoder,
+            EmailService emailService) {
         this.userRepository = userRepository;
         this.otpTokenRepository = otpTokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @GetMapping("/forgot-password")
@@ -48,19 +51,18 @@ public class ForgotPasswordController {
             return "forgot-password";
         }
 
-        String otp = OtpGenerator.generateOtp();
+        String otp = TokenUtil.generateOtp();
 
         OtpToken token = new OtpToken();
         token.setUserId(user.getId());
         token.setOtpCode(otp);
-        token.setPurpose(OtpToken.Purpose.PASSWORD_RESET);
+        token.setPurpose(OtpToken.Purpose.PASSWORD_CHANGE);
         token.setExpiresAt(LocalDateTime.now().plusMinutes(10));
         token.setUsed(false);
 
         otpTokenRepository.save(token);
 
-        System.out.println("\n[DEV] Password reset OTP for " + email + ": " + otp);
-        System.out.println("[DEV] Reset link: http://localhost:8080/users/reset-password?email=" + email + "\n");
+        emailService.sendOtp(user.getEmail(), otp);
 
         model.addAttribute("email", email);
         model.addAttribute("info", "An OTP has been sent to your registered email.");
@@ -108,7 +110,7 @@ public class ForgotPasswordController {
                 .findByUserIdAndOtpCodeAndPurposeAndUsedFalse(
                         user.getId(),
                         otp,
-                        OtpToken.Purpose.PASSWORD_RESET
+                        OtpToken.Purpose.PASSWORD_CHANGE
                 )
                 .orElse(null);
 
@@ -124,6 +126,7 @@ public class ForgotPasswordController {
         otpTokenRepository.save(token);
 
         model.addAttribute("success", "Password reset successful. Please login.");
+        emailService.sendConfirmation(user.getEmail(), "PASSWORD RESET");
         return "user-login";
     }
 

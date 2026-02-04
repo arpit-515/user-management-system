@@ -11,24 +11,32 @@
     Account Verification
 </div>
 
-<div class="container">
-    <div class="card" style="max-width: 400px;">
-        <h3>${title}</h3>
+<div class="container center">
+
+    <div class="card" style="max-width: 400px; width: 100%;">
+
+        <div class="section-title">
+            ${title}
+        </div>
 
         <p>${info}</p>
 
         <form method="post"
               action="${pageContext.request.contextPath}${postUrl}">
+
             <input type="hidden" name="email" value="${email}" />
 
-            <label>OTP</label>
-            <input type="text" name="otp" required />
+            <label for="otp">OTP</label>
+            <input type="text" id="otp"
+                   name="otp" required />
 
             <button type="submit">Verify</button>
         </form>
 
         <p class="error">${error}</p>
+
     </div>
+
 </div>
 
 </body>

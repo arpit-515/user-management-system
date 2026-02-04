@@ -15,11 +15,12 @@
 <div class="container">
 
     <div class="card">
-        <h3>Welcome</h3>
-        <p>You are successfully logged in. Use the options below to manage your account.</p>
+        <div class="section-title">Welcome</div>
+        <p>
+            You are successfully logged in.
+            Use the options below to manage your account.
+        </p>
     </div>
-
-    <br/>
 
     <div class="section-title">Account Settings</div>
 

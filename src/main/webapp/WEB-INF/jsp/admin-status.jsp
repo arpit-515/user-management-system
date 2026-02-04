@@ -12,14 +12,16 @@
     Admin : Account Status
 </div>
 
-<div class="container">
-    <a class="back-link"
-       href="${pageContext.request.contextPath}/admin/dashboard">
-        ← Back to Dashboard
-    </a>
+<div class="container center">
 
-    <div class="card" style="max-width: 500px;">
-        <h3>Admin Account Status</h3>
+    <div class="card" style="max-width: 500px; width: 100%;">
+
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/admin/dashboard">
+            &larr; Back to Dashboard
+        </a>
+
+        <div class="section-title">Admin Account Status</div>
 
         <p>
             Current Status:
@@ -38,6 +40,7 @@
         <form method="post"
               action="${pageContext.request.contextPath}/admin/status"
               onsubmit="return confirm('Are you sure you want to change admin status?');">
+
             <button type="submit">
                 <%
                     if (active != null && active) {
@@ -48,6 +51,7 @@
                 %>
             </button>
         </form>
+
     </div>
 
 </div>

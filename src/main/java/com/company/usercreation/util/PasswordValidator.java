@@ -1,7 +1,5 @@
 package com.company.usercreation.util;
 
-import java.nio.charset.CharsetEncoder;
-
 public class PasswordValidator {
 
     public static String validate(String password) {

@@ -81,10 +81,6 @@ public class UserLoginController {
             return reloadLogin(model, session, "Your account has been deactivated by administrator.");
         }
 
-        if (user.getStatus() == User.Status.INACTIVE) {
-            return "redirect:/users/verify/email?email=" + user.getEmail();
-        }
-
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             return reloadLogin(model, session,
                     "Invalid credentials");

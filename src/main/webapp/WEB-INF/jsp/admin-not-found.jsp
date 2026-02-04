@@ -12,15 +12,25 @@
     Admin : Error
 </div>
 
-<div class="container">
-    <div class="card" style="max-width: 400px;">
-        <h3>404 : Page Not Found</h3>
-        <p>The requested URL is invalid or does not exist.</p>
+<div class="container center">
 
-        <a href="${pageContext.request.contextPath}/admin/dashboard">
-            Go back to Dashboard
+    <div class="card" style="max-width: 400px; width: 100%; text-align: center;">
+
+        <div class="section-title">
+            404 : Page Not Found
+        </div>
+
+        <p>
+            The requested URL is invalid or does not exist.
+        </p>
+
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/admin/dashboard">
+            &larr; Go back to Dashboard
         </a>
+
     </div>
+
 </div>
 
 </body>

@@ -7,21 +7,30 @@
 </head>
 <body>
 
-<div class="navbar">Forgot Password</div>
+<div class="navbar">
+    Forgot Password
+</div>
 
-<div class="container">
-    <div class="card" style="max-width:400px;">
-        <h3>Reset Password</h3>
+<div class="container center">
+
+    <div class="card" style="max-width: 400px; width: 100%;">
+
+        <div class="section-title">Reset Password</div>
 
         <form method="post"
               action="${pageContext.request.contextPath}/users/forgot-password">
-            <label>Email</label><br>
-            <input type="email" name="email" required /><br><br>
+
+            <label for="email">Email</label>
+            <input type="email" id="email"
+                   name="email" required />
+
             <button type="submit">Send OTP</button>
         </form>
 
-        <p style="color:red">${error}</p>
+        <p class="error">${error}</p>
+
     </div>
+
 </div>
 
 </body>

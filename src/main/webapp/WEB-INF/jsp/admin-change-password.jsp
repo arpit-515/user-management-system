@@ -11,34 +11,45 @@
     Admin : Change Password
 </div>
 
-<div class="container">
-    <a class="back-link"
-       href="${pageContext.request.contextPath}/admin/dashboard">
-        - Back to Dashboard
-    </a>
+<div class="container center">
 
-    <div class="card" style="max-width: 500px;">
-        <h3>Change Admin Password</h3>
+    <div class="card" style="max-width: 500px; width: 100%;">
+
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/admin/dashboard">
+            &larr; Back to Dashboard
+        </a>
+
+        <div class="section-title">Change Admin Password</div>
         <p>Please enter your current password to continue.</p>
 
         <form method="post"
               action="${pageContext.request.contextPath}/admin/change-password"
               onsubmit="return confirm('Are you sure you want to change the admin password?');">
 
-            <label>Current Password</label><br>
-            <input type="password" name="currentPassword" required /><br><br>
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword"
+                   name="currentPassword" required />
 
-            <label>New Password</label><br>
-            <input type="password" name="newPassword" required /><br><br>
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword"
+                   name="newPassword" required />
 
-            <label>Confirm New Password</label><br>
-            <input type="password" name="confirmPassword" required /><br><br>
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword"
+                   name="confirmPassword" required />
 
             <button type="submit">Change Password</button>
         </form>
 
-        <p style="color:red">${error}</p>
-        <p style="color:green">${success}</p>
+        <c:if test="${not empty error}">
+            <div class="error">${error}</div>
+        </c:if>
+
+        <c:if test="${not empty success}">
+            <div class="success">${success}</div>
+        </c:if>
+
     </div>
 
 </div>

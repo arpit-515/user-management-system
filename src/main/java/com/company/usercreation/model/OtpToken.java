@@ -1,7 +1,6 @@
 package com.company.usercreation.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,21 +18,21 @@ public class OtpToken {
     private String otpCode;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "purpose", length = 50, nullable = false)
     private Purpose purpose;
 
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
+    @Column(nullable = false)
     private boolean used;
 
     public enum Purpose {
-        ACTIVATION_EMAIL,
-        ACTIVATION_MOBILE,
-        PASSWORD_RESET,
-        PASSWORD_CHANGE
+        INVITATION,
+        PASSWORD_CHANGE,
+        EMAIL_VERIFICATION,
+        MOBILE_VERIFICATION
     }
-
 
     //getters
 
@@ -82,5 +81,4 @@ public class OtpToken {
     public void setUsed(boolean used) {
         this.used = used;
     }
-
 }

@@ -12,15 +12,23 @@
     Account Verification
 </div>
 
-<div class="container">
+<div class="container center">
 
-    <div class="card" style="max-width: 500px;">
-        <h3>Account Verified</h3>
-        <p>Your account has been activated successfully.</p>
+    <div class="card" style="max-width: 500px; width: 100%; text-align: center;">
 
-        <a href="${pageContext.request.contextPath}/users/login">
-            Proceed to Login
+        <div class="section-title">
+            Account Verified
+        </div>
+
+        <p>
+            Your account has been activated successfully.
+        </p>
+
+        <a class="back-link"
+           href="${pageContext.request.contextPath}/users/login">
+            &rarr; Proceed to Login
         </a>
+
     </div>
 
 </div>

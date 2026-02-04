@@ -32,4 +32,9 @@ public interface OtpTokenRepository extends JpaRepository<OtpToken, Long> {
             String otpCode,
             Purpose purpose
     );
+
+    Optional<OtpToken> findByOtpCodeAndPurposeAndUsedFalse(
+            String otpCode,
+            OtpToken.Purpose purpose
+    );
 }

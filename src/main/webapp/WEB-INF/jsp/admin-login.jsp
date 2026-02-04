@@ -15,16 +15,21 @@
 <div class="container center">
 
     <div class="card" style="max-width: 600px; width: 100%;">
-        <h3 style="text-align:center;">Administrator Login</h3>
+
+        <div class="section-title" style="text-align:center;">
+            Administrator Login
+        </div>
 
         <form method="post"
               action="${pageContext.request.contextPath}/admin/login">
 
-            <label>Username</label>
-            <input type="text" name="username" required>
+            <label for="username">Username</label>
+            <input type="text" id="username"
+                   name="username" required>
 
-            <label>Password</label>
-            <input type="password" name="password" required>
+            <label for="password">Password</label>
+            <input type="password" id="password"
+                   name="password" required>
 
             <button type="submit">Login</button>
         </form>
@@ -51,6 +56,7 @@
         <%
             }
         %>
+
     </div>
 
 </div>

@@ -1,11 +1,12 @@
 package com.company.usercreation.controller;
 
+import com.company.usercreation.Services.EmailService;
 import com.company.usercreation.model.OtpToken;
 import com.company.usercreation.model.User;
 import com.company.usercreation.repository.OtpTokenRepository;
 import com.company.usercreation.repository.UserRepository;
-import com.company.usercreation.util.OtpGenerator;
 import com.company.usercreation.util.PasswordValidator;
+import com.company.usercreation.util.TokenUtil;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -24,15 +25,17 @@ public class UserAccountController {
     private final UserRepository userRepository;
     private final OtpTokenRepository otpTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public UserAccountController(
             UserRepository userRepository,
             OtpTokenRepository otpTokenRepository,
-            BCryptPasswordEncoder passwordEncoder
-    ) {
+            BCryptPasswordEncoder passwordEncoder,
+            EmailService emailService) {
         this.userRepository = userRepository;
         this.otpTokenRepository = otpTokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @GetMapping("/change-password")
@@ -64,7 +67,7 @@ public class UserAccountController {
             return "user-change-password";
         }
 
-        String otp = OtpGenerator.generateOtp();
+        String otp = TokenUtil.generateOtp();
 
         OtpToken token = new OtpToken();
         token.setUserId(userId);
@@ -75,7 +78,7 @@ public class UserAccountController {
 
         otpTokenRepository.save(token);
 
-        System.out.println("[DEV] Password change OTP for " + user.getEmail() + ": " + otp);
+        emailService.sendOtp(user.getEmail(), otp);
 
         model.addAttribute("info", "OTP sent to your registered email");
         return "user-change-password-verify";
@@ -124,6 +127,8 @@ public class UserAccountController {
 
         token.setUsed(true);
         otpTokenRepository.save(token);
+
+        emailService.sendConfirmation(user.getEmail(), "PASSWORD CHANGE");
 
         session.invalidate();
 

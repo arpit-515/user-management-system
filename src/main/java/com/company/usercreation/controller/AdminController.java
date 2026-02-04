@@ -1,18 +1,23 @@
 package com.company.usercreation.controller;
 
+import com.company.usercreation.Services.EmailService;
 import com.company.usercreation.model.Admin;
 import com.company.usercreation.model.AuditLog;
+import com.company.usercreation.model.OtpToken;
 import com.company.usercreation.model.User;
 import com.company.usercreation.repository.AdminRepository;
 import com.company.usercreation.repository.AuditLogRepository;
 import com.company.usercreation.repository.OtpTokenRepository;
 import com.company.usercreation.repository.UserRepository;
 import com.company.usercreation.util.PasswordValidator;
+import com.company.usercreation.util.TokenUtil;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/admin")
@@ -21,13 +26,17 @@ public class AdminController{
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final AuditLogRepository auditLogRepository;
+    private final EmailService emailService;
+    private final OtpTokenRepository otpTokenRepository;
 
     public AdminController(AdminRepository adminRepository,
-                           BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, OtpTokenRepository otpTokenRepository, AuditLogRepository auditLogRepository) {
+                           BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, OtpTokenRepository otpTokenRepository, AuditLogRepository auditLogRepository, EmailService emailService) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.auditLogRepository = auditLogRepository;
+        this.emailService = emailService;
+        this.otpTokenRepository = otpTokenRepository;
     }
 
     //method for adding logs
@@ -264,22 +273,38 @@ public class AdminController{
         User user = new User();
         user.setFullName(fullName.trim());
         user.setEmail(email.trim());
+        user.setMobile(mobile.trim());
         user.setCreatedByAdminId(adminId);
         user.setStatus(User.Status.INACTIVE);
-        user.setMobile(mobile.trim());
         user.setEmailVerified(false);
         user.setMobileVerified(false);
+
         userRepository.save(user);
         logAudit(session, "CREATED_USER", user.getId());
-        model.addAttribute("success", "User created successfully, Verification pending");
-        String verificationLink = "http://localhost:8080/users/verify/email?email=" + user.getEmail();
 
-        System.out.println("\nUser verification link:");
-        System.out.println(verificationLink + "\n");
+        String rawToken = TokenUtil.generateToken();
+        String tokenHash = TokenUtil.generateHash(rawToken);
 
+        OtpToken inviteToken = new OtpToken();
+        inviteToken.setUserId(user.getId());
+        inviteToken.setOtpCode(tokenHash);
+        inviteToken.setPurpose(OtpToken.Purpose.INVITATION);
+        inviteToken.setUsed(false);
+        inviteToken.setExpiresAt(LocalDateTime.now().plusHours(48));
+
+        otpTokenRepository.save(inviteToken);
+
+        String verificationLink = "https://ed55ac1140f7.ngrok-free.app/users/verify/email?token=" + rawToken;
+
+        emailService.sendLink(user.getEmail(), verificationLink, OtpToken.Purpose.INVITATION);
+        model.addAttribute(
+                "success",
+                "User created successfully. Verification link sent to email."
+        );
 
         return "admin-create-user";
     }
+
 
     @GetMapping("/users")
     public String viewUsers(HttpSession session, Model model) {
@@ -381,25 +406,58 @@ public class AdminController{
             return "redirect:/admin/users";
         }
 
-        boolean identityChanged =
-                !user.getEmail().equals(email) ||
-                        !user.getMobile().equals(mobile);
-
+        boolean emailChanged = !user.getEmail().equals(email);
+        boolean mobileChanged = !user.getMobile().equals(mobile);
         user.setFullName(fullName);
         user.setEmail(email);
         user.setMobile(mobile);
 
-        if (identityChanged) {
+        if (emailChanged || mobileChanged) {
             user.setStatus(User.Status.INACTIVE);
-            String verificationLink = "http://localhost:8080/users/verify/email?email=" + user.getEmail();
-            System.out.println("Link for user to verify: " + verificationLink);
-            logAudit(session,
-                    "UPDATED_USER_EMAIL_OR_MOBILE",
-                    user.getId());
+            user.setEmailVerified(false);
+            user.setMobileVerified(false);
+
+            OtpToken.Purpose verificationPurpose;
+            if (emailChanged) {
+                verificationPurpose = OtpToken.Purpose.EMAIL_VERIFICATION;
+            } else {
+                verificationPurpose = OtpToken.Purpose.MOBILE_VERIFICATION;
+            }
+
+            otpTokenRepository.invalidateUnusedOtps(
+                    user.getId(),
+                    verificationPurpose
+            );
+
+            String rawToken = TokenUtil.generateToken();
+            String tokenHash = TokenUtil.generateHash(rawToken);
+
+            OtpToken verificationToken = new OtpToken();
+            verificationToken.setUserId(user.getId());
+            verificationToken.setOtpCode(tokenHash);
+            verificationToken.setPurpose(verificationPurpose);
+            verificationToken.setUsed(false);
+            verificationToken.setExpiresAt(LocalDateTime.now().plusHours(48));
+
+            otpTokenRepository.save(verificationToken);
+
+            if (verificationPurpose == OtpToken.Purpose.EMAIL_VERIFICATION) {
+
+                String verificationLink = "https://ed55ac1140f7.ngrok-free.app/users/verify/email?token=" + rawToken;
+
+                emailService.sendLink(user.getEmail(), verificationLink, OtpToken.Purpose.EMAIL_VERIFICATION);
+            } else {
+                String otp = TokenUtil.generateOtp();
+
+                verificationToken.setOtpCode(TokenUtil.generateHash(otp));
+                otpTokenRepository.save(verificationToken);
+
+                emailService.sendLink(user.getEmail(), otp, OtpToken.Purpose.MOBILE_VERIFICATION);
+            }
+
+            logAudit(session, "UPDATED_USER_IDENTITY_REQUIRES_VERIFICATION", user.getId());
         } else {
-            logAudit(session,
-                    "UPDATED_USER_NAME",
-                    user.getId());
+            logAudit(session, "UPDATED_USER_NAME", user.getId());
         }
 
         userRepository.save(user);
@@ -408,7 +466,6 @@ public class AdminController{
 
 
 
-    //fallback for every other route
     @GetMapping("/**")
     public String handleAllOtherUrls(HttpSession session) {
         return "redirect:/admin/login";
